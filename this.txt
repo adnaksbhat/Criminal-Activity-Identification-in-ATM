@@ -1,0 +1,364 @@
+##################TRAIN IMAGES
+
+!nvidia-smi   #check GPU
+
+from google.colab import drive
+drive.mount('/content/gdrive')
+
+#clone
+!git clone https://github.com/AlexeyAB/darknet
+
+%cd darknet
+!sed -i 's/OPENCV=0/OPENCV=1/' Makefile
+!sed -i 's/GPU=0/GPU=1/' Makefile
+!sed -i 's/CUDNN=0/CUDNN=1/' Makefile
+!make
+
+!sed -i 's/batch=1/batch=64/' cfg/yolov3_training.cfg
+!sed -i 's/subdivisions=1/subdivisions=16/' cfg/yolov3_training.cfg
+!sed -i 's/max_batches=500200/max_batches=4000/' cfg/yolov3_training.cfg
+!sed -i '610 s@classes=80@classes=2@' cfg/yolov3_training.cfg
+!sed -i '696 s@classes=80@classes=2@' cfg/yolov3_training.cfg
+!sed -i '783 s@classes=80@classes=2@' cfg/yolov3_training.cfg
+!sed -i '603 s@filters=255@filters=21@' cfg/yolov3_training.cfg
+!sed -i '689 s@filters=255@filters=21@' cfg/yolov3_training.cfg
+!sed -i '776 s@filters=255@filters=21@' cfg/yolov3_training.cfg
+#create .names and .data files
+
+!echo -e 'Wearing Mask\nNot wearing Mask' > data/obj.names
+!echo -e 'classes= 2\ntrain = data/train.txt\nvalid = data/test.txt\nnames = data/obj.names\nbackup = /content/gdrive/MyDrive/yolov3' > data/obj.data
+
+# save yolov3_training.cfg and obj.names to google drive
+
+!cp cfg/yolov3_training.cfg /content/gdrive/MyDrive/yolov3/yolov3_testing.cfg
+!cp data/obj.names /content/gdrive/MyDrive/yolov3/classes.txt
+!mkdir data/obj
+!unzip /content/gdrive/MyDrive/yolov3/images.zip -d data/obj
+
+{{{{{Archive:  /content/gdrive/MyDrive/yolov3/images.zip
+  inflating: data/obj/_110755695_gettyimages-1202072951.txt  
+  inflating: data/obj/_111403698_gettyimages-1207855523.jpg  
+  inflating: data/obj/_111403698_gettyimages-1207855523.txt  
+  inflating: data/obj/_116381967_facemask.jpg  
+  inflating: data/obj/_116381967_facemask.txt  
+  inflating: data/obj/0d6c9c64010e4fa78cfd6e1f612ff539_18.jpeg  
+  inflating: data/obj/0d6c9c64010e4fa78cfd6e1f612ff539_18.txt  
+  inflating: data/obj/5e71267bc4854010b62f5925.png  
+  inflating: data/obj/5e71267bc4854010b62f5925.txt  
+  inflating: data/obj/960x0.jpg      
+  inflating: data/obj/960x0.txt      
+  inflating: data/obj/1140-family-distanced-in-park-imgcache-rev-web-900-513.jpg  
+  inflating: data/obj/1140-family-distanced-in-park-imgcache-rev-web-900-513.txt  
+  inflating: data/obj/2020-02-28T032620Z_1647176435_RC2F9F9ODNLT_RTRMADP_3_HEALTH-.jpg  
+  inflating: data/obj/2020-02-28T032620Z_1647176435_RC2F9F9ODNLT_RTRMADP_3_HEALTH-.txt  
+  inflating: data/obj/8663ece5-b31e-4d73-b531-2fee72f84e0c.jpeg  
+  inflating: data/obj/8663ece5-b31e-4d73-b531-2fee72f84e0c.txt  
+  inflating: data/obj/021121_ts_mask_feat-1030x580.jpg  
+  inflating: data/obj/021121_ts_mask_feat-1030x580.txt  
+  inflating: data/obj/3655000d-7adc-4e0f-a0ab-ac5d5ce337fa_tcm990-383423.jpg  
+ extracting: data/obj/3655000d-7adc-4e0f-a0ab-ac5d5ce337fa_tcm990-383423.txt  
+  inflating: data/obj/74965821.jpg   
+  inflating: data/obj/AP_20030201663763-1000x667.jpg  
+  inflating: data/obj/AP_20030201663763-1000x667.txt  
+  inflating: data/obj/AP_20105623715222-1.jpg  
+  inflating: data/obj/AP_20105623715222-1.txt  
+  inflating: data/obj/AP20187521415750.jpg  
+  inflating: data/obj/AP20187521415750.txt  
+  inflating: data/obj/AP20199839332268.jpg  
+  inflating: data/obj/AP20199839332268.txt  
+  inflating: data/obj/BrightonPark_FILE_1.jpg  
+  inflating: data/obj/BrightonPark_FILE_1.txt  
+  inflating: data/obj/chotiner-masks.jpg  
+  inflating: data/obj/chotiner-masks.txt  
+  inflating: data/obj/Coronavirus_masks_1280x720.jpg  
+  inflating: data/obj/Coronavirus_masks_1280x720.txt  
+  inflating: data/obj/face_masks.jpg  
+  inflating: data/obj/face_masks.txt  
+  inflating: data/obj/Face_Masks_Street_1296x728-header-1.jpg  
+  inflating: data/obj/Face_Masks_Street_1296x728-header-1.txt  
+  inflating: data/obj/Facemask_collage.jpg  
+  inflating: data/obj/Facemask_collage.txt  
+  inflating: data/obj/faceMasksProtectCouple-1273627467-770x553-1-650x428.jpg  
+  inflating: data/obj/faceMasksProtectCouple-1273627467-770x553-1-650x428.txt  
+  inflating: data/obj/face-mask-woman-1024x538.jpg  
+  inflating: data/obj/face-mask-woman-1024x538.txt  
+  inflating: data/obj/file-20200408-44160-1qpyrm3.jpg  
+  inflating: data/obj/file-20200408-44160-1qpyrm3.txt  
+  inflating: data/obj/file-20200719-15-kqya1m.jpg  
+  inflating: data/obj/file-20200719-15-kqya1m.txt  
+  inflating: data/obj/file-20201118-17-kczsra.jpg  
+  inflating: data/obj/file-20201118-17-kczsra.txt  
+  inflating: data/obj/GettyImages-1204549918 SMALL.jpg  
+  inflating: data/obj/GettyImages-1204549918 SMALL.txt  
+  inflating: data/obj/GettyImages-1212796755-645x645.jpg  
+  inflating: data/obj/GettyImages-1212796755-645x645.txt  
+  inflating: data/obj/gettyimages-1215069129_jacoblund.png  
+  inflating: data/obj/gettyimages-1215069129_jacoblund.txt  
+  inflating: data/obj/GettyImages-1218031592.jpg  
+  inflating: data/obj/GettyImages-1218031592.txt  
+  inflating: data/obj/GettyImages-1239699427.jpg  
+  inflating: data/obj/GettyImages-1239699427.txt  
+  inflating: data/obj/health-coronavirus-southkorea.jpg  
+  inflating: data/obj/health-coronavirus-southkorea.txt  
+  inflating: data/obj/https---cdn-cnn-com-cnnnext-dam-assets-200423120222-01-face-.jpg  
+  inflating: data/obj/https---cdn-cnn-com-cnnnext-dam-assets-200423120222-01-face-.txt  
+  inflating: data/obj/im-197851.jpeg  
+  inflating: data/obj/im-197851.txt  
+  inflating: data/obj/im-214252.jpeg  
+  inflating: data/obj/im-214252.txt  
+  inflating: data/obj/image (1).jpeg  
+  inflating: data/obj/image (1).txt  
+  inflating: data/obj/image (2).jpeg  
+  inflating: data/obj/image (2).txt  
+  inflating: data/obj/image (3).jpeg  
+  inflating: data/obj/image (3).txt  
+  inflating: data/obj/image (4).jpeg  
+  inflating: data/obj/image (4).txt  
+  inflating: data/obj/image (5).jpeg  
+  inflating: data/obj/image (5).txt  
+  inflating: data/obj/image (6).jpeg  
+  inflating: data/obj/image (7).jpeg  
+  inflating: data/obj/image (7).txt  
+  inflating: data/obj/image (8).jpeg  
+  inflating: data/obj/image (8).txt  
+  inflating: data/obj/image (9).jpeg  
+  inflating: data/obj/image (9).txt  
+  inflating: data/obj/image (10).jpeg  
+  inflating: data/obj/image (10).txt  
+  inflating: data/obj/image (11).jpeg  
+  inflating: data/obj/image (11).txt  
+  inflating: data/obj/image (12).jpeg  
+  inflating: data/obj/image (12).txt  
+  inflating: data/obj/image (13).jpeg  
+  inflating: data/obj/image (13).txt  
+  inflating: data/obj/image (14).jpeg  
+  inflating: data/obj/image (14).txt  
+  inflating: data/obj/image (15).jpeg  
+  inflating: data/obj/image (15).txt  
+  inflating: data/obj/image (16).jpeg  
+  inflating: data/obj/image (16).txt  
+  inflating: data/obj/image (17).jpeg  
+  inflating: data/obj/image (17).txt  
+  inflating: data/obj/image (18).jpeg  
+  inflating: data/obj/image (18).txt  
+  inflating: data/obj/image (19).jpeg  
+  inflating: data/obj/image (19).txt  
+  inflating: data/obj/image (20).jpeg  
+  inflating: data/obj/image.jpeg     
+  inflating: data/obj/image.txt      
+  inflating: data/obj/images (1).jpeg  
+  inflating: data/obj/images (1).txt  
+  inflating: data/obj/images (2).jpeg  
+  inflating: data/obj/images (2).txt  
+  inflating: data/obj/images (3).jpeg  
+  inflating: data/obj/images (3).txt  
+  inflating: data/obj/images (4).jpeg  
+  inflating: data/obj/images (4).txt  
+  inflating: data/obj/images (5).jpeg  
+  inflating: data/obj/images (6).jpeg  
+  inflating: data/obj/images (7).jpeg  
+  inflating: data/obj/images (7).txt  
+  inflating: data/obj/images (8).jpeg  
+  inflating: data/obj/images (8).txt  
+  inflating: data/obj/images (9).jpeg  
+  inflating: data/obj/images (9).txt  
+  inflating: data/obj/images (10).jpeg  
+  inflating: data/obj/images (10).txt  
+  inflating: data/obj/images (11).jpeg  
+  inflating: data/obj/images (11).txt  
+  inflating: data/obj/images (12).jpeg  
+  inflating: data/obj/images (12).txt  
+  inflating: data/obj/images (13).jpeg  
+  inflating: data/obj/images (14).jpeg  
+  inflating: data/obj/images (14).txt  
+  inflating: data/obj/images (15).jpeg  
+  inflating: data/obj/images (15).txt  
+  inflating: data/obj/images (16).jpeg  
+  inflating: data/obj/images (16).txt  
+  inflating: data/obj/images (17).jpeg  
+  inflating: data/obj/images (17).txt  
+  inflating: data/obj/images (18).jpeg  
+  inflating: data/obj/images (18).txt  
+  inflating: data/obj/images (19).jpeg  
+  inflating: data/obj/images (19).txt  
+  inflating: data/obj/images (20).jpeg  
+  inflating: data/obj/images (20).txt  
+  inflating: data/obj/images (21).jpeg  
+  inflating: data/obj/images (21).txt  
+  inflating: data/obj/images (22).jpeg  
+  inflating: data/obj/images (22).txt  
+  inflating: data/obj/images (23).jpeg  
+  inflating: data/obj/images (23).txt  
+  inflating: data/obj/images (24).jpeg  
+  inflating: data/obj/images (24).txt  
+  inflating: data/obj/images (25).jpeg  
+  inflating: data/obj/images (25).txt  
+  inflating: data/obj/images (26).jpeg  
+  inflating: data/obj/images (26).txt  
+  inflating: data/obj/images (27).jpeg  
+  inflating: data/obj/images (27).txt  
+  inflating: data/obj/images (28).jpeg  
+  inflating: data/obj/images.jpeg    
+  inflating: data/obj/images.png     
+  inflating: data/obj/images.txt     
+  inflating: data/obj/iStock-1208378653_0.jpg  
+  inflating: data/obj/kids-masks-900x600.jpg  
+  inflating: data/obj/kids-masks-900x600.txt  
+  inflating: data/obj/Mask Roundup Image_0.png  
+  inflating: data/obj/Mask Roundup Image_0.txt  
+  inflating: data/obj/mask.jpg       
+  inflating: data/obj/mask.txt       
+  inflating: data/obj/Mask_Couple_cropped.jpg  
+  inflating: data/obj/Mask_Couple_cropped.txt  
+  inflating: data/obj/mask-acne.jpg  
+  inflating: data/obj/mask-acne.txt  
+  inflating: data/obj/masks_in_crowd_300_200_int_c1-1x.jpg  
+  inflating: data/obj/masks-and-covid19-article-l.png  
+  inflating: data/obj/masks-and-covid19-article-l.txt  
+  inflating: data/obj/masks-and-covid19-banner-l.png  
+  inflating: data/obj/masks-and-covid19-banner-l.txt  
+  inflating: data/obj/Masks-father-son.jpg  
+  inflating: data/obj/Masks-father-son.txt  
+  inflating: data/obj/mask-wearing_subway_crowd.jpg  
+  inflating: data/obj/mask-wearing_subway_crowd.txt  
+  inflating: data/obj/merlin_170835774_0d8a329d-c342-4d6b-bb52-4ce5201c28ee-articl.jpg  
+  inflating: data/obj/merlin_170835774_0d8a329d-c342-4d6b-bb52-4ce5201c28ee-articl.txt  
+  inflating: data/obj/multi-ethnic-group-masks-1500px.jpg  
+  inflating: data/obj/people-wearing-face-mask-for-protection-3957986-1600x1071.jpg  
+  inflating: data/obj/people-wearing-face-mask-for-protection-3957986-1600x1071.txt  
+  inflating: data/obj/People-wearing-masks-downtown.jpg  
+  inflating: data/obj/People-wearing-masks-downtown.txt  
+  inflating: data/obj/people-wearing-masks-lyon-france-getty-200824_hpMain_2020082.jpg  
+  inflating: data/obj/people-wearing-masks-lyon-france-getty-200824_hpMain_2020082.txt  
+  inflating: data/obj/rationalmask.jpg  
+  inflating: data/obj/rationalmask.txt  
+  inflating: data/obj/Screen-Shot-2020-10-27-at-12-22-53-PM-1024x548.png  
+  inflating: data/obj/shutterstock_1718439448_DeLeo NSF Grant_SMALL.jpg  
+  inflating: data/obj/SQ_Medical_Supplies_elenabs.jpg  
+  inflating: data/obj/tokyo-face-masks-001.jpg  
+  inflating: data/obj/tokyo-face-masks-001.txt  
+  inflating: data/obj/unnamed.jpg    
+  inflating: data/obj/unnamed.txt    
+  inflating: data/obj/wearing_masks_on_a_train.jpg  
+  inflating: data/obj/wearing_masks_on_a_train.txt  
+  inflating: data/obj/Women-wearing-facemasks-while-walking-outdoors-Milan-Italy-F.jpg  
+  inflating: data/obj/Women-wearing-facemasks-while-walking-outdoors-Milan-Italy-F.txt  
+  inflating: data/obj/young-people-within-the-age-group-26-35-years-believe-that-s.jpg  
+  inflating: data/obj/young-people-within-the-age-group-26-35-years-believe-that-s.txt  
+  inflating: data/obj/_110755695_gettyimages-1202072951.jpg  
+
+}}}}}
+
+
+####TRAIN
+
+import glob
+images_list = glob.glob("data/obj/*.jpg")
+with open("data/train.txt","w") as f:
+  f.write("\n".join(images_list))
+!wget https://pjreddie.com/media/files/darknet53.conv.74
+!./darknet detector train data/obj.data cfg/yolov3_training.cfg darknet53.conv.74 -dont_show
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+###########################################################################################Run model
+
+import cv2
+import numpy as np
+
+net=cv2.dnn.readNet('/Users/Skanda/Desktop/YYOOLLOO/Z_THIS/yolov3_training_last.weights','/Users/Skanda/Desktop/YYOOLLOO/Z_THIS/yolov3_testing.cfg')
+classes=[]
+with open('/Users/Skanda/Desktop/YYOOLLOO/Z_THIS/classes.txt','r') as f:
+    classes=f.read().splitlines()
+
+#print(classes)
+
+
+
+
+
+img=cv2.imread('/Users/Skanda/Desktop/YYOOLLOO/Z_THIS/mask9.jpg')
+height, width, _ = img.shape
+
+
+
+blob=cv2.dnn.blobFromImage(img, 1/255, (416, 416), (0,0,0), swapRB=True, crop=False)
+
+#for b in blob:
+ #   for n, img_blob in enumerate(b):
+  #      cv2.imshow(str(n), img_blob)
+
+
+net.setInput(blob)
+
+output_layers_names=net.getUnconnectedOutLayersNames()
+layerOutputs=net.forward(output_layers_names)
+
+
+boxes=[]
+confidences=[]
+class_ids=[]
+
+for output in layerOutputs:
+    for detection in output:
+        scores=detection[5:]
+        class_id=np.argmax(scores)
+        confidence=scores[class_id]
+        if confidence>0.5:
+            center_x=int(detection[0]*width)
+            center_y=int(detection[1]*height)
+            w=int(detection[2]*width)
+            h=int(detection[3]*height)
+
+            x=int(center_x - w/2)
+            y=int(center_y - h/2)
+
+            boxes.append([x, y, w, h])
+            confidences.append((float(confidence)))
+            class_ids.append(class_id)
+
+
+indexes=cv2.dnn.NMSBoxes(boxes,confidences, 0.5, 0.4)
+font=cv2.FONT_HERSHEY_PLAIN
+colors=np.random.uniform(0, 255, size=(len(boxes), 3))
+
+for i in indexes.flatten():
+    x, y, w, h = boxes[i]
+    label=str(classes[class_ids[i]])
+    confidence=str(round(confidences[i],2))
+    color=colors[i]
+    cv2.rectangle(img, (x,y), (x+w, y+h), color, 2)
+    cv2.putText(img, label + " " + confidence, (x, y+20), font, 2, (255,255,255), 2)
+
+
+
+
+
+
+
+
+cv2.imshow('Image',img)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
