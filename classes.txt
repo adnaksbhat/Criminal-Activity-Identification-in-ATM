@@ -1,0 +1,5 @@
+Wearing Mask
+Not wearing Mask
+Helmet
+Gun
+Knife
