@@ -1,0 +1,10 @@
+# Criminal-Activity-Identification-in-ATM
+YOLOv3, Python-OpenCV, Google Colab for GPU
+
+
+
+Store all labelled and masked images in google drive. later mount it to google colab.
+Use weights file as your trained images.
+
+
+This model detects with mask, without mas, with helmet, detect knife and detect gun.
