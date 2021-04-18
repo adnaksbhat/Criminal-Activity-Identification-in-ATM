@@ -8,3 +8,4 @@ Use weights file as your trained images.
 
 
 This model detects with mask, without mas, with helmet, detect knife and detect gun.
+Alert message if weapons are detected.
