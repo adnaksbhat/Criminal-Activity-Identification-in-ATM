@@ -1,0 +1,64 @@
+----------------#mount to google drive
+from google.colab import drive
+drive.mount('/content/gdrive')
+
+
+
+----------------#clone
+!git clone https://github.com/AlexeyAB/darknet
+
+
+
+----------------#configure
+%cd darknet
+!sed -i 's/OPENCV=0/OPENCV=1/' Makefile
+!sed -i 's/GPU=0/GPU=1/' Makefile
+!sed -i 's/CUDNN=0/CUDNN=1/' Makefile
+
+
+
+----------------# compile
+!make
+
+
+----------------#make a copy of yolov3.cfg file
+!cp cfg/yolov3.cfg cfg/yolov3_training.cfg
+
+
+
+----------------#create .names and .data files
+!echo -e 'Wearing Mask\nNot wearing Mask\nHelmet\nGun\nKnife' > data/obj.names
+!echo -e 'classes= 5\ntrain = data/train.txt\nvalid = data/test.txt\nnames = data/obj.names\nbackup = /content/gdrive/MyDrive/yolov3' > data/obj.data
+
+
+
+----------------# save yolov3_training.cfg and obj.names to google drive
+!cp cfg/yolov3_training.cfg /content/gdrive/MyDrive/yolov3/yolov3_testing.cfg
+!cp data/obj.names /content/gdrive/MyDrive/yolov3/classes.txt
+
+
+----------------#unzip all images from drive
+!mkdir data/obj
+!unzip /content/gdrive/MyDrive/yolov3/All.zip -d data/obj
+
+
+
+----------------#create train.txt file
+import glob
+images_list = glob.glob("data/obj/*.jpg")
+with open("data/train.txt","w") as f:
+  f.write("\n".join(images_list))
+
+
+
+----------------#download pre trained weights
+!wget https://pjreddie.com/media/files/darknet53.conv.74
+
+
+
+
+----------------#start training
+!./darknet detector train data/obj.data cfg/yolov3_training.cfg darknet53.conv.74 -dont_show
+
+#uncomment below and comment above to restart training from last saved weights
+#!./darknet detector train data/obj.data cfg/yolov3_training.cfg /coj
